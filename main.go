@@ -8,11 +8,14 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"os/exec"
 )
 
-const Version = "v0.1.0"
+// Constants
+const Version = "v0.2.0"
 const DocumentsPath = "/Documents/sb/" // based on the $HOME directory
 
+// Helper functions
 func getHomeDir() string {
 	dirname, err := os.UserHomeDir()
 	if err != nil {
@@ -68,6 +71,29 @@ func newResource(name string) {
 	fmt.Println("Resource created!")
 }
 
+// Commands
+func commandGit() {
+	docsFullPath := getHomeDir() + DocumentsPath
+
+	commandArgs := []string{"-C", docsFullPath}
+
+	for i := 2; i < len(os.Args); i++ {
+		commandArgs = append(commandArgs, os.Args[i])
+	}
+
+	if len(os.Args) == 2 {
+		commandArgs = append(commandArgs, "status")
+	}
+
+	out, err := exec.Command("git", commandArgs...).Output()
+	if err != nil {
+		fmt.Printf("Unable to execute git: %v\n", err)
+		return
+	}
+
+	fmt.Println(string(out[:]))
+}
+
 func commandNew() {
 	if len(os.Args) == 2 {
 		fmt.Println("No type given, exiting.")
@@ -97,6 +123,7 @@ func commandNew() {
 }
 
 func main() {
+	// Help text
 	if len(os.Args) == 1 {
 		fmt.Println("Second Brain " + Version)
 		fmt.Println("Developed by: Berkay Çubuk <berkay@berkaycubuk.com>")
@@ -105,12 +132,19 @@ func main() {
 		fmt.Println("	sb [command] [parameters]")
 		fmt.Println("")
 		fmt.Println("Commands:")
-		fmt.Println("	new		Create new file with prebuilt frontmatter")
+		fmt.Println("	new			Create new thing")
+		fmt.Println("		project			Create new project")
+		fmt.Println("		area			Create new area")
+		fmt.Println("		resource		Create new resource")
+		fmt.Println("	git			Use git inside documents folder")
 		return
 	}
 
+	// Command switcher
 	switch os.Args[1] {
 	case "new":
 		commandNew()
+	case "git":
+		commandGit()
 	}
 }
