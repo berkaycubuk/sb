@@ -2,9 +2,16 @@
  * Copyright (c) Berkay Çubuk <berkay@berkaycubuk.com>, 2022
  */
 
+/*
+ * TODO:
+ * - get preferences from .sbrc file
+ * - move helpers and commands into seperate files
+ */
+
 package main
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -14,8 +21,27 @@ import (
 // Constants
 const Version = "v0.2.0"
 const DocumentsPath = "/Documents/sb/" // based on the $HOME directory
+const TextEditor = "vim"               // favourite code editor to edit markdown files
 
 // Helper functions
+func editFile(filePath string) {
+	cmd := exec.Command(TextEditor, filePath)
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	err := cmd.Run()
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
+func isFileExist(filepath string) bool {
+	if _, err := os.Stat(filepath); errors.Is(err, os.ErrNotExist) {
+		return false
+	}
+
+	return true
+}
+
 func getHomeDir() string {
 	dirname, err := os.UserHomeDir()
 	if err != nil {
@@ -53,22 +79,38 @@ func genFrontmatter(title string) string {
 func newProject(name string) {
 	filename := getHomeDir() + DocumentsPath + "projects/" + name + ".md"
 	newFile(filename, []byte(genFrontmatter(name)))
-
-	fmt.Println("Project created!")
+	// open the file with text editor after creating it
+	editFile(filename)
 }
 
 func newArea(name string) {
 	path := getHomeDir() + DocumentsPath + "areas/" + name
 	newFolder(path)
-
 	fmt.Println("Area created!")
 }
 
 func newResource(name string) {
 	filename := getHomeDir() + DocumentsPath + "resources/" + name + ".md"
 	newFile(filename, []byte(genFrontmatter(name)))
+	editFile(filename)
+}
 
-	fmt.Println("Resource created!")
+func openProject(name string) {
+	filename := getHomeDir() + DocumentsPath + "projects/" + name + ".md"
+	if !isFileExist(filename) {
+		fmt.Println("File not found!")
+		return
+	}
+	editFile(filename)
+}
+
+func openResource(name string) {
+	filename := getHomeDir() + DocumentsPath + "resources/" + name + ".md"
+	if !isFileExist(filename) {
+		fmt.Println("File not found!")
+		return
+	}
+	editFile(filename)
 }
 
 // Commands
@@ -122,6 +164,28 @@ func commandNew() {
 	}
 }
 
+func commandOpen() {
+	if len(os.Args) == 2 {
+		fmt.Println("No type given, exiting.")
+		return
+	}
+
+	switch os.Args[2] {
+	case "project":
+		if len(os.Args) == 3 {
+			fmt.Println("No project name given, exiting.")
+			return
+		}
+		openProject(os.Args[3])
+	case "resource":
+		if len(os.Args) == 3 {
+			fmt.Println("No resource name given, exiting.")
+			return
+		}
+		openResource(os.Args[3])
+	}
+}
+
 func main() {
 	// Help text
 	if len(os.Args) == 1 {
@@ -136,6 +200,9 @@ func main() {
 		fmt.Println("		project			Create new project")
 		fmt.Println("		area			Create new area")
 		fmt.Println("		resource		Create new resource")
+		fmt.Println("	open		Open a thing")
+		fmt.Println("		project			Open project")
+		fmt.Println("		resource		Open resource")
 		fmt.Println("	git			Use git inside documents folder")
 		return
 	}
@@ -144,6 +211,8 @@ func main() {
 	switch os.Args[1] {
 	case "new":
 		commandNew()
+	case "open":
+		commandOpen()
 	case "git":
 		commandGit()
 	}
