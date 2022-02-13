@@ -28,5 +28,9 @@ Archive include inactive items from the other tree categories.
 ## Installation
 
 - Run `git clone git@github.com:berkaycubuk/sb.git` command where you want to use this software.
-- Update `DocumentsPath` inside the main.go file.
-- Create `projects`, `areas`, `resources` and `archive` folders inside the `DocumentsPath` directory.
+- Create .sbrc config file in your home directory. Set your editor and docspath:
+    ```
+    set editor vim
+    set docspath /Documents/sb    
+    ```
+- Create `projects`, `areas`, `resources` and `archive` folders inside the `docspath` directory.
