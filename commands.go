@@ -15,12 +15,9 @@ func commandHelp() {
 	fmt.Println("")
 	fmt.Println("Commands:")
 	fmt.Println("	new			Create new thing")
-	fmt.Println("		project			Create new project")
-	fmt.Println("		area			Create new area")
-	fmt.Println("		resource		Create new resource")
+	fmt.Println("		page			Create new page")
 	fmt.Println("	open		Open a thing")
-	fmt.Println("		project			Open project")
-	fmt.Println("		resource		Open resource")
+	fmt.Println("		page			Open page")
 	fmt.Println("	git			Use git inside documents folder")
 	fmt.Println("	help		Print help")
 }
@@ -54,24 +51,12 @@ func commandNew() {
 	}
 
 	switch os.Args[2] {
-	case "project":
+	case "page":
 		if len(os.Args) == 3 {
-			fmt.Println("No project name given, exiting.")
+			fmt.Println("No page name given, exiting.")
 			return
 		}
-		newProject(os.Args[3])
-	case "area":
-		if len(os.Args) == 3 {
-			fmt.Println("No area name given, exiting.")
-			return
-		}
-		newArea(os.Args[3])
-	case "resource":
-		if len(os.Args) == 3 {
-			fmt.Println("No resource name given, exiting.")
-			return
-		}
-		newResource(os.Args[3])
+		newPage(os.Args[3])
 	}
 }
 
@@ -82,17 +67,11 @@ func commandOpen() {
 	}
 
 	switch os.Args[2] {
-	case "project":
+	case "page":
 		if len(os.Args) == 3 {
-			fmt.Println("No project name given, exiting.")
+			fmt.Println("No page name given, exiting.")
 			return
 		}
-		openProject(os.Args[3])
-	case "resource":
-		if len(os.Args) == 3 {
-			fmt.Println("No resource name given, exiting.")
-			return
-		}
-		openResource(os.Args[3])
+		openPage(os.Args[3])
 	}
 }
