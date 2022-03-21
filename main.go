@@ -6,10 +6,12 @@ package main
 
 import (
 	"os"
+
+	"github.com/berkaycubuk/sb/modules/task"
 )
 
 // Constants
-const Version = "v0.3.0"
+const Version = "v0.4.0"
 
 func main() {
 	loadConfig()
@@ -31,4 +33,7 @@ func main() {
 	case "help":
 		commandHelp()
 	}
+
+	// Register module commands
+	task.RegisterCommands(os.Args)
 }

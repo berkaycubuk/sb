@@ -17,7 +17,7 @@ func commandHelp() {
 	fmt.Println("	new			Create new thing")
 	fmt.Println("		page			Create new page")
 	fmt.Println("	open		Open a thing")
-	fmt.Println("		page			Open page")
+	// fmt.Println("		page			Open page")
 	fmt.Println("	git			Use git inside documents folder")
 	fmt.Println("	help		Print help")
 }
@@ -65,13 +65,5 @@ func commandOpen() {
 		fmt.Println("No type given, exiting.")
 		return
 	}
-
-	switch os.Args[2] {
-	case "page":
-		if len(os.Args) == 3 {
-			fmt.Println("No page name given, exiting.")
-			return
-		}
-		openPage(os.Args[3])
-	}
+	openPage(os.Args[2])
 }
